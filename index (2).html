@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Pattern AI Analyzer</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',Tahoma;
+    background: radial-gradient(circle at top, #4f46e5, #0f172a);
+    color:white;
+    direction:rtl;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    width:500px;
+}
+
+.card{
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    border-radius:20px;
+    padding:30px;
+    border:1px solid rgba(255,255,255,0.2);
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+    animation: pop 0.5s ease;
+}
+
+@keyframes pop{
+    from{transform:scale(0.9);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+h1{text-align:center}
+
+.btn{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:15px;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    color:white;
+}
+
+.btn:hover{transform:scale(1.03)}
+
+.choices{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:20px;
+}
+
+.choice{
+    background:rgba(255,255,255,0.15);
+    padding:15px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.choice:hover{
+    background:rgba(255,255,255,0.25);
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    text-align:center;
+    margin-top:10px;
+}
+
+.section{
+    margin-top:15px;
+    background:rgba(255,255,255,0.1);
+    padding:12px;
+    border-radius:12px;
+}
+.hidden{display:none}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- الصفحة 1 -->
+<div class="card" id="menu">
+    <h1>✨ اختر نوع التحليل</h1>
+
+    <div class="choices">
+        <div class="choice" onclick="start('simple')">
+            🔢 تحليل بسيط
+        </div>
+
+        <div class="choice" onclick="start('smart')">
+            🤖 تحليل ذكي
+        </div>
+    </div>
+</div>
+
+<!-- الصفحة 2 -->
+<div class="card hidden" id="app">
+    <h1>محلل الأنماط</h1>
+
+    <input id="nums" placeholder="مثال: 1,2,3,4">
+
+    <button class="btn" onclick="analyze()">تحليل</button>
+
+    <div id="result"></div>
+</div>
+
+</div>
+
+<script>
+
+let mode="simple";
+
+function start(type){
+    mode=type;
+    document.getElementById("menu").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+}
+
+function analyze(){
+    const nums=document.getElementById("nums").value
+    .split(",").map(x=>Number(x.trim()));
+
+    const out=document.getElementById("result");
+
+    if(nums.length<3){
+        out.innerHTML="<div class='section'>أدخلي 3 أرقام على الأقل</div>";
+        return;
+    }
+
+    const diff=nums[1]-nums[0];
+    const isLinear=nums.every((v,i)=>{
+        if(i===0)return true;
+        return (v-nums[i-1])===diff;
+    });
+
+    if(mode==="simple"){
+        if(isLinear){
+            out.innerHTML=`
+            <div class="section">
+            🔢 نمط بسيط<br>
+            العدد القادم: ${nums.at(-1)+diff}
+            </div>`;
+        }else{
+            out.innerHTML="<div class='section'>ما فيه نمط واضح</div>";
+        }
+    }
+
+    else{
+        const smartGuess=nums.at(-1)+diff+Math.round(Math.random()*2);
+
+        out.innerHTML=`
+        <div class="section">
+        🤖 تحليل ذكي<br>
+        توقع تقريبي: ${smartGuess}
+        </div>`;
+    }
+}
+
+</script>
+
+</body>
+</html>
